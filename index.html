@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MEME GENERATOR</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@suprsend/web-sdk@latest"></script>
 </head>
 <body class="bg-gray-600 p-5">
     <div class="upload mb-5 mt-8 p-4">
@@ -38,7 +39,12 @@
         <img src="image4.jpg" alt="img 4" width="200px" id="image4" class="draggable" draggable="true">
         <img src="image5.jpg" alt="img 5" width="200px" id="image5" class="draggable" draggable="true">
     </div>
+    <div id="notification-inbox" class="p-4 mt-5 bg-gray-100 rounded-lg shadow-md">
+        <h2 class="text-xl font-bold mb-4">Notifications</h2>
+        <ul id="notification-list" class="list-disc pl-5"></ul>
+    </div>
     <script>
+
         document.getElementById('addCategory').addEventListener('click', function(){
             const categoryName = document.getElementById('categoryName').value.trim();
             const categoryColor = document.getElementById('categoryColor').value;
@@ -122,6 +128,29 @@
                 const image = document.getElementById(imageId);
                 zone.appendChild(image);
             });
+        });
+
+        suprsend.init('dxAJMHnCyluVSLGu3MlV', 'SS.WSS.SF2ITme6VYHQseY2EpvFVtQmQCGJ9XVWpY0EC7rg');
+        async function loadNotifications() {
+            try {
+                const response = await suprsend.getNotifications();
+                const notifications = response.data;
+                const notificationList = document.getElementById('notification-list');
+                notificationList.innerHTML = '';
+
+                notifications.forEach(notification => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = notification.message;
+                    notificationList.appendChild(listItem);
+                });
+            } catch (error) {
+                console.error('Error fetching notifications:', error);
+            }
+        }
+
+        // Load notifications when the page loads
+        document.addEventListener('DOMContentLoaded', function () {
+            loadNotifications();
         });
     </script>
 </body>
