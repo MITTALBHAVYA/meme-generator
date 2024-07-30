@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEME GENERATOR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-600 p-5">
+    <div class="upload mb-5 mt-8 p-4">
+        <h2 class="text-white text-3xl font-bold text-center">Uploaded Images</h2>
+        <input type="file" id="imageUpload" accept="image/*" multiple class="w-full text-lg text-state-500 file:mr-4 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100">
+    </div>
+    <div class="images grid grid-cols-3 gap-4 mb-10" id="imageContainer"></div>
+
+    <div class="custom-category mb-5">
+        <h2 class="text-white text-3xl font-bold text-center underline">Custom Categories</h2>
+        <div class="flex p-2 justify-between"><input type="text" placeholder="Enter Category Name" id="categoryName" class="text-sm border rounded">
+        <input type="color" id="categoryColor" class="border rounded">
+        <button id="addCategory" class="bg-violet-500 mx-4 text-white rounded hover:bg-violet-400">Add Category</button>
+    </div>
+    </div>
+
+    <div class="categories space-y-4 mt-10 p-8" id="categories"></div>
+
+    <h1 class="mt-8 text-white text-3xl font-bold text-center">MEME GENERATOR</h1>
+    <div class="categories space-y-4 mt-10 p-8">
+        <div id="god" class="drop-zone bg-green-300 p-3 flex flex-row space-x-3 overflow-auto"><h2 class="text-xl font-bold">God</h2></div>
+        <div id="decent" class="drop-zone bg-blue-300 p-3 flex flex-row space-x-3 overflow-auto"><h2 class="text-xl font-bold">Decent</h2></div>
+        <div id="average" class="drop-zone bg-yellow-300 p-3 flex flex-row space-x-3 overflow-auto"><h2 class="text-xl font-bold">Average</h2></div>
+        <div id="trash" class="drop-zone bg-red-300 p-3 flex flex-row space-x-3 overflow-auto"><h2 class="text-xl font-bold">Trash</h2></div>
+        <div id="intolerable" class="drop-zone bg-gray-300 p-3 flex flex-row space-x-3 overflow-auto"><h2 class="text-xl font-bold">Intolerable</h2></div>
+    </div>
+    <div class="images mt-10 grid grid-cols-8 gap-4 m-8">
+        <img src="image1.jpg" alt="img 1" width="200px" id="image1" class="draggable" draggable="true">
+        <img src="image2.jpg" alt="img 2" width="200px" id="image2" class="draggable" draggable="true">
+        <img src="image3.jpg" alt="img 3" width="200px" id="image3" class="draggable" draggable="true">
+        <img src="image4.jpg" alt="img 4" width="200px" id="image4" class="draggable" draggable="true">
+        <img src="image5.jpg" alt="img 5" width="200px" id="image5" class="draggable" draggable="true">
+    </div>
+    <script>
+        document.getElementById('addCategory').addEventListener('click', function(){
+            const categoryName = document.getElementById('categoryName').value.trim();
+            const categoryColor = document.getElementById('categoryColor').value;
+            if(categoryName === ''){
+                alert('Please enter a category name');
+                return;
+            }
+            const categoryContainer = document.getElementById('categories');
+            const newCategory = document.createElement('div');
+            newCategory.classList.add('flex','category','drop-zone', 'space-x-3', 'overflow-auto','flex-row','p-2');
+            newCategory.style.backgroundColor = categoryColor;
+            newCategory.innerHTML = `<h2 class="text-xl font-bold p-2">${categoryName}</h2>`;
+            categoryContainer.appendChild(newCategory);
+
+            // Adding drag and drop event listeners to the new category
+            newCategory.addEventListener('dragover', event => {
+                event.preventDefault();
+                newCategory.classList.add('bg-gray-400');
+            });
+
+            newCategory.addEventListener('dragleave', event => {
+                event.preventDefault();
+                newCategory.classList.remove('bg-gray-400');
+            });
+
+            newCategory.addEventListener('drop', event => {
+                event.preventDefault();
+                newCategory.classList.remove('bg-gray-400');
+                const imageId = event.dataTransfer.getData('text/plain');
+                const draggableElement = document.getElementById(imageId);
+                newCategory.appendChild(draggableElement);
+            });
+        });
+
+        // Handle image upload
+        document.getElementById('imageUpload').addEventListener('change', function(event){
+            const files = event.target.files;
+            const imageContainer = document.getElementById('imageContainer');
+            for(let i = 0; i < files.length; i++){
+                const file = files[i];
+                const reader = new FileReader();
+                reader.onload = function(e){
+                    const image = document.createElement('img');
+                    image.src = e.target.result;
+                    image.width = 200;
+                    image.classList.add('draggable');
+                    image.draggable = true;
+                    image.alt = "Uploaded Image";
+                    image.id = "uploadedImage" + i;
+                    imageContainer.appendChild(image);
+
+                    image.addEventListener('dragstart', event => {
+                        event.dataTransfer.setData('text/plain', event.target.id);
+                    });
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Add dragstart event to initially loaded draggable elements
+        document.querySelectorAll(".draggable").forEach(item => {
+            item.addEventListener('dragstart', event => {
+                event.dataTransfer.setData('text/plain', event.target.id);
+            });
+        });
+
+        // Add dragover and drop event listeners to the existing drop zones
+        document.querySelectorAll(".drop-zone").forEach(zone => {
+            zone.addEventListener('dragover', event => {
+                event.preventDefault();
+                zone.classList.add('bg-gray-400');
+            });
+            zone.addEventListener('dragleave', event => {
+                event.preventDefault();
+                zone.classList.remove('bg-gray-400');
+            });
+            zone.addEventListener('drop', event => {
+                event.preventDefault();
+                zone.classList.remove('bg-gray-400');
+                const imageId = event.dataTransfer.getData('text/plain');
+                const image = document.getElementById(imageId);
+                zone.appendChild(image);
+            });
+        });
+    </script>
+</body>
+</html>

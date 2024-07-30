@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEME GENERATOR</title>
+    <link rel="stylesheet" href="https://cdn.tailwindcss.com">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-600 p-5">
+    <div class="upload mb-5 mt-8 p-4">
+        <h2 class="text-white text-3xl font-bold text-center">Uploaded Images</h2>
+        <input type="file" id="imageUpload" accept="image/*" multiple class="file-input">
+    </div>
+    <div class="images grid grid-cols-3 gap-4 mb-10" id="imageContainer"></div>
+
+    <div class="custom-category mb-5">
+        <h2 class="text-white text-3xl font-bold text-center underline">Custom Categories</h2>
+        <div class="flex p-2 justify-between">
+            <input type="text" placeholder="Enter Category Name" id="categoryName" class="text-sm border rounded">
+            <input type="color" id="categoryColor" class="border rounded">
+            <button id="addCategory" class="btn-add-category">Add Category</button>
+        </div>
+    </div>
+
+    <div class="categories space-y-4 mt-10 p-8" id="categories"></div>
+
+    <h1 class="mt-8 text-white text-3xl font-bold text-center">MEME GENERATOR</h1>
+    <div id="predefinedCategories"></div>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
